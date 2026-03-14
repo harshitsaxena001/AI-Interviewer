@@ -53,7 +53,7 @@ export function UseCases() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
-              className="group relative border border-gray-100 rounded-[2rem] p-10 hover:border-black hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 bg-white"
+              className="group relative border border-gray-100 rounded-4xl p-10 hover:border-black hover:shadow-2xl hover:shadow-black/5 transition-all duration-500 bg-white"
             >
               <div className="flex flex-col md:flex-row md:items-center gap-6 mb-8">
                 <div className="w-16 h-16 rounded-2xl bg-black text-white flex items-center justify-center group-hover:scale-110 transition-transform duration-500">

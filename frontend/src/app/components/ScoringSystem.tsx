@@ -69,7 +69,7 @@ const scoreBands = [
 
 export function ScoringSystem() {
   return (
-    <section className="bg-gradient-to-b from-gray-50 to-white py-24 px-6">
+    <section className="bg-linear-to-b from-gray-50 to-white py-24 px-6">
       <div className="max-w-7xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
