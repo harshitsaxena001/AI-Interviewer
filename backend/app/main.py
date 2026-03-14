@@ -30,11 +30,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-from app.routers import auth, interview, practice
+from app.routers import auth, interview, practice, tts
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
 app.include_router(interview.router, prefix="/api/v1/interview", tags=["interview"])
 app.include_router(practice.router, prefix="/api/v1/practice", tags=["practice"])
+app.include_router(tts.router, prefix="/api/v1/tts", tags=["tts"])
 
 @app.get("/")
 async def root():

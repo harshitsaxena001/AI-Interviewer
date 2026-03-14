@@ -22,3 +22,4 @@ httpx
 aiosqlite
 email-validator
 greenlet
+piper-tts
