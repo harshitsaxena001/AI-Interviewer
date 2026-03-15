@@ -1,5 +1,5 @@
-import { motion } from 'motion/react';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { motion } from "motion/react";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 export function Hero() {
   return (
@@ -40,13 +40,18 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
-          <a href="/signin">
-          <button className="px-8 py-4 bg-white text-black hover:bg-gray-200 transition-colors rounded-lg flex items-center gap-2 group">
+          <button
+            onClick={() => (window.location.href = "/signup")}
+            className="px-8 py-4 bg-white text-black hover:bg-gray-200 transition-colors rounded-lg flex items-center gap-2 group"
+          >
             Start Practice Interview
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </button>
-          </a>
-          <button className="px-8 py-4 border border-white/20 hover:bg-white/5 transition-colors rounded-lg">
+
+          <button
+            onClick={() => (window.location.href = "/signin")}
+            className="px-8 py-4 border border-white/20 hover:bg-white/5 transition-colors rounded-lg"
+          >
             For HR Teams
           </button>
         </motion.div>

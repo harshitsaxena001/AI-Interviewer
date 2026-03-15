@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -12,6 +13,21 @@ import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
 
 export function SignIn() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Simple logic for the hackathon demo:
+    // If email contains "hr", go to HR dashboard, else Candidate
+    if (email.toLowerCase().includes("hr")) {
+      window.location.href = "/dashboard/hr";
+    } else {
+      window.location.href = "/dashboard";
+    }
+  };
+
   return (
     <div className="h-screen bg-gray-100 flex items-center justify-center p-4 md:p-6 font-sans overflow-hidden">
       <div className="max-w-6xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-full max-h-[720px]">
@@ -36,13 +52,17 @@ export function SignIn() {
             <p className="text-gray-500 text-sm">Please enter your details</p>
           </motion.div>
 
-          <form className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1.5">
               <Label htmlFor="email">Email Address</Label>
               <div className="relative">
                 <Mail className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
                 <Input
                   id="email"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
                   className="pl-12 h-11 bg-gray-50 border-none rounded-xl focus-visible:ring-black"
                 />
@@ -56,6 +76,9 @@ export function SignIn() {
                 <Input
                   id="password"
                   type="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   className="pl-12 h-11 bg-gray-50 border-none rounded-xl focus-visible:ring-black"
                 />
@@ -80,10 +103,49 @@ export function SignIn() {
               </a>
             </div>
 
-            <Button className="w-full h-11 bg-[#1a1a1a] hover:bg-black text-white rounded-xl text-base font-semibold transition-all duration-300 shadow-sm">
+            <Button
+              type="submit"
+              className="w-full h-11 bg-[#1a1a1a] hover:bg-black text-white rounded-xl text-base font-semibold transition-all duration-300 shadow-sm"
+            >
               Sign in
             </Button>
           </form>
+
+          <div className="mt-8 p-4 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 text-center">
+              Demo Credentials
+            </p>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("candidate@demo.com");
+                  setPassword("password123");
+                }}
+                className="flex flex-col items-center p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100 group"
+              >
+                <span className="text-xs font-bold text-black group-hover:text-[#4f46e5]">
+                  Candidate
+                </span>
+                <span className="text-[10px] text-gray-500">
+                  candidate@demo.com
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEmail("hr@demo.com");
+                  setPassword("password123");
+                }}
+                className="flex flex-col items-center p-2 rounded-xl hover:bg-white hover:shadow-sm transition-all border border-transparent hover:border-gray-100 group"
+              >
+                <span className="text-xs font-bold text-black group-hover:text-[#4f46e5]">
+                  HR Team
+                </span>
+                <span className="text-[10px] text-gray-500">hr@demo.com</span>
+              </button>
+            </div>
+          </div>
 
           <div className="mt-6 text-center md:text-left">
             <p className="text-gray-500 text-sm">

@@ -9,10 +9,13 @@ import { CTA } from "./components/CTA";
 import { Footer } from "./components/Footer";
 import { SignIn } from "./components/SignIn";
 import { SignUp } from "./components/SignUp";
+import { Dashboard } from "./components/Dashboard";
 
 export default function App() {
   const isSignInPage = window.location.pathname === "/signin";
   const isSignUpPage = window.location.pathname === "/signup";
+  const isDashboardPage = window.location.pathname === "/dashboard";
+  const isHRDashboardPage = window.location.pathname === "/dashboard/hr";
 
   if (isSignInPage) {
     return <SignIn />;
@@ -20,6 +23,14 @@ export default function App() {
 
   if (isSignUpPage) {
     return <SignUp />;
+  }
+
+  if (isDashboardPage) {
+    return <Dashboard role="candidate" userName="Adrian" />;
+  }
+
+  if (isHRDashboardPage) {
+    return <Dashboard role="hr" userName="Sarah HR" />;
   }
 
   return (
