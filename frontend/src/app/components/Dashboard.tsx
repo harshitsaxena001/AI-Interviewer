@@ -64,20 +64,20 @@ interface HistoryItem {
 
 // Mock Data for Charts
 const SKILL_DATA = [
-  { subject: 'Communication', A: 85, fullMark: 100 },
-  { subject: 'Confidence', A: 78, fullMark: 100 },
-  { subject: 'Technical', A: 92, fullMark: 100 },
-  { subject: 'Response Time', A: 70, fullMark: 100 },
+  { subject: "Communication", A: 85, fullMark: 100 },
+  { subject: "Confidence", A: 78, fullMark: 100 },
+  { subject: "Technical", A: 92, fullMark: 100 },
+  { subject: "Response Time", A: 70, fullMark: 100 },
 ];
 
 const TREND_DATA = [
-  { name: 'Mon', score: 65 },
-  { name: 'Tue', score: 72 },
-  { name: 'Wed', score: 68 },
-  { name: 'Thu', score: 85 },
-  { name: 'Fri', score: 82 },
-  { name: 'Sat', score: 91 },
-  { name: 'Sun', score: 88 },
+  { name: "Mon", score: 65 },
+  { name: "Tue", score: 72 },
+  { name: "Wed", score: 68 },
+  { name: "Thu", score: 85 },
+  { name: "Fri", score: 82 },
+  { name: "Sat", score: 91 },
+  { name: "Sun", score: 88 },
 ];
 
 const CANDIDATE_HISTORY: HistoryItem[] = [
@@ -90,7 +90,8 @@ const CANDIDATE_HISTORY: HistoryItem[] = [
     status: "completed",
     duration: "45 mins",
     aiInsight: "Excellent grasp of system design principles.",
-    overallPerformance: "The candidate demonstrated high proficiency in React and architectural patterns.",
+    overallPerformance:
+      "The candidate demonstrated high proficiency in React and architectural patterns.",
     strengths: ["React Hooks", "System Design", "Problem Solving"],
     weaknesses: ["Unit Testing", "Performance Optimization"],
   },
@@ -233,10 +234,27 @@ export function Dashboard({
                 </CardHeader>
                 <div className="h-[300px] w-full mt-4">
                   <ResponsiveContainer width="100%" height="100%">
-                    <RadarChart cx="50%" cy="50%" outerRadius="80%" data={SKILL_DATA}>
+                    <RadarChart
+                      cx="50%"
+                      cy="50%"
+                      outerRadius="80%"
+                      data={SKILL_DATA}
+                    >
                       <PolarGrid stroke="#f1f1f1" />
-                      <PolarAngleAxis dataKey="subject" tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} />
-                      <PolarRadiusAxis angle={30} domain={[0, 100]} tick={false} axisLine={false} />
+                      <PolarAngleAxis
+                        dataKey="subject"
+                        tick={{
+                          fill: "#94a3b8",
+                          fontSize: 12,
+                          fontWeight: 600,
+                        }}
+                      />
+                      <PolarRadiusAxis
+                        angle={30}
+                        domain={[0, 100]}
+                        tick={false}
+                        axisLine={false}
+                      />
                       <Radar
                         name="Skills"
                         dataKey="A"
@@ -259,24 +277,41 @@ export function Dashboard({
                 <div className="h-[300px] w-full mt-4">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={TREND_DATA}>
-                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f1f1" />
-                      <XAxis 
-                        dataKey="name" 
-                        axisLine={false} 
-                        tickLine={false} 
-                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }} 
+                      <CartesianGrid
+                        strokeDasharray="3 3"
+                        vertical={false}
+                        stroke="#f1f1f1"
+                      />
+                      <XAxis
+                        dataKey="name"
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{
+                          fill: "#94a3b8",
+                          fontSize: 12,
+                          fontWeight: 600,
+                        }}
                         dy={10}
                       />
                       <YAxis hide domain={[0, 100]} />
-                      <Tooltip 
-                        contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                      <Tooltip
+                        contentStyle={{
+                          borderRadius: "16px",
+                          border: "none",
+                          boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                        }}
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="score" 
-                        stroke="#000" 
-                        strokeWidth={4} 
-                        dot={{ r: 4, fill: '#000', strokeWidth: 2, stroke: '#fff' }}
+                      <Line
+                        type="monotone"
+                        dataKey="score"
+                        stroke="#000"
+                        strokeWidth={4}
+                        dot={{
+                          r: 4,
+                          fill: "#000",
+                          strokeWidth: 2,
+                          stroke: "#fff",
+                        }}
                         activeDot={{ r: 6, strokeWidth: 0 }}
                       />
                     </LineChart>
@@ -306,7 +341,9 @@ export function Dashboard({
                     ))
                   ) : (
                     <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-border/60">
-                      <p className="font-bold text-foreground">No recent activity</p>
+                      <p className="font-bold text-foreground">
+                        No recent activity
+                      </p>
                     </div>
                   )}
                 </div>
@@ -319,9 +356,12 @@ export function Dashboard({
                     <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
                       <Sparkles className="text-white" size={28} />
                     </div>
-                    <h3 className="text-2xl font-bold leading-tight">Ready to excel?</h3>
+                    <h3 className="text-2xl font-bold leading-tight">
+                      Ready to excel?
+                    </h3>
                     <p className="text-white/60 text-xs leading-relaxed font-medium px-4">
-                      Start a mock session now to see your latest performance analysis.
+                      Start a mock session now to see your latest performance
+                      analysis.
                     </p>
                     <Button
                       onClick={() => setShowUploadModal(true)}
@@ -334,15 +374,21 @@ export function Dashboard({
 
                 {/* Growth Summary View */}
                 <Card className="border-none shadow-sm rounded-3xl bg-white p-6 space-y-4">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Quick Insights</h3>
+                  <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                    Quick Insights
+                  </h3>
                   <div className="space-y-4 pt-2">
                     <div className="flex gap-3">
                       <div className="shrink-0 w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
                         <ShieldCheck size={16} />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-foreground">Strong: Logical Reasoning</p>
-                        <p className="text-[10px] text-muted-foreground font-medium">Consistent 90%+ in high-pressure scenarios.</p>
+                        <p className="text-xs font-bold text-foreground">
+                          Strong: Logical Reasoning
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-medium">
+                          Consistent 90%+ in high-pressure scenarios.
+                        </p>
                       </div>
                     </div>
                     <div className="flex gap-3">
@@ -350,8 +396,12 @@ export function Dashboard({
                         <AlertTriangle size={16} />
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-foreground">Weak: System Design Depth</p>
-                        <p className="text-[10px] text-muted-foreground font-medium">Needs focus on scalability edge cases.</p>
+                        <p className="text-xs font-bold text-foreground">
+                          Weak: System Design Depth
+                        </p>
+                        <p className="text-[10px] text-muted-foreground font-medium">
+                          Needs focus on scalability edge cases.
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -572,7 +622,9 @@ function CircularStat({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
-          <span className="text-2xl font-black tracking-tighter leading-none text-foreground">{value}%</span>
+          <span className="text-2xl font-black tracking-tighter leading-none text-foreground">
+            {value}%
+          </span>
           <span className="text-[7px] font-black text-muted-foreground tracking-[0.2em] uppercase mt-1 leading-none">
             {category}
           </span>
@@ -582,7 +634,9 @@ function CircularStat({
         <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-2">
           {label}
         </p>
-        <p className="text-[9px] font-bold text-black/40 uppercase tracking-tighter leading-none">{subtext}</p>
+        <p className="text-[9px] font-bold text-black/40 uppercase tracking-tighter leading-none">
+          {subtext}
+        </p>
       </div>
     </Card>
   );
@@ -648,7 +702,9 @@ function QuickStat({
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-2">
               {label}
             </p>
-            <h3 className="text-2xl font-bold text-foreground tracking-tighter">{value}</h3>
+            <h3 className="text-2xl font-bold text-foreground tracking-tighter">
+              {value}
+            </h3>
           </div>
           <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
             {trend}
