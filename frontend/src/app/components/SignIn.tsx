@@ -88,7 +88,10 @@ export function SignIn() {
           <div className="mt-6 text-center md:text-left">
             <p className="text-gray-500 text-sm">
               Don't have an account?{" "}
-              <a href="/signup" className="text-black font-semibold hover:underline">
+              <a
+                href="/signup"
+                className="text-black font-semibold hover:underline"
+              >
                 Sign up for free
               </a>
             </p>

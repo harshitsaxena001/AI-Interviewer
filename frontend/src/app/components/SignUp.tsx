@@ -34,7 +34,9 @@ export function SignUp() {
             </div>
 
             <h1 className="text-3xl font-bold mb-1">Create an account</h1>
-            <p className="text-gray-500 text-sm">Start your journey for free today</p>
+            <p className="text-gray-500 text-sm">
+              Start your journey for free today
+            </p>
           </motion.div>
 
           <form className="space-y-4">
@@ -103,7 +105,10 @@ export function SignUp() {
           <div className="mt-6 text-center md:text-left">
             <p className="text-gray-500 text-sm">
               Already have an account?{" "}
-              <a href="/signin" className="text-black font-semibold hover:underline">
+              <a
+                href="/signin"
+                className="text-black font-semibold hover:underline"
+              >
                 Sign in
               </a>
             </p>
