@@ -10,32 +10,36 @@ from app.services.llm_service import llm_service
 
 router = APIRouter()
 
+from app.routers.auth import get_current_user
+from app.models.user import User
+
 @router.post("/create", response_model=schemas.SessionResponse)
 async def create_interview_session(
     session_data: schemas.SessionCreate,
+    current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db)
 ):
     # 1. Create a new Interview Session
-    # In a real app, 'candidate_id' would come from the authenticated user
     new_session = InterviewSession(
         job_role=session_data.job_role,
-        jd_text=session_data.jd_text,
-        candidate_id=session_data.candidate_id,
-        hr_id=session_data.candidate_id, # Placeholder for HR ID
+        jd_text=session_data.jd_text or "",
+        candidate_id=current_user.id,
+        hr_id=current_user.id, # Placeholder for HR ID
         status=InterviewStatus.PENDING
     )
     db.add(new_session)
     await db.commit()
     await db.refresh(new_session)
 
-    # 2. Generate Questions using LLM
+    # 4. Generate Questions using LLM (using the user's saved resume text as context)
     questions_data = await llm_service.generate_questions(
         job_role=session_data.job_role,
         jd_text=session_data.jd_text,
+        resume_text=current_user.resume_text, # passing the user's stored resume
         count=5
     )
 
-    # 3. Save Questions to DB
+    # 5. Save Questions to DB
     for idx, q_data in enumerate(questions_data):
         # Validate or default the question type
         q_type_str = q_data.get("type", "technical").lower()
@@ -141,3 +145,75 @@ async def submit_answer(
     await db.refresh(new_answer)
     
     return new_answer
+
+from fastapi import UploadFile, File, Form
+from app.services.stt_service import stt_service
+
+@router.post("/{session_id}/answer-audio", response_model=schemas.AnswerResponse)
+async def submit_audio_answer(
+    session_id: int,
+    question_id: int = Form(...),
+    audio_file: UploadFile = File(...),
+    db: AsyncSession = Depends(get_db)
+):
+    # Verify Question belongs to Session
+    q_result = await db.execute(select(Question).where(Question.id == question_id))
+    question = q_result.scalars().first()
+    
+    if not question:
+        raise HTTPException(status_code=404, detail="Question not found")
+        
+    if question.interview_session_id != session_id:
+         raise HTTPException(status_code=400, detail="Question does not belong to this session")
+
+    # Transcribe audio
+    # Save audio locally
+    import os
+    import time
+    
+    audio_bytes = await audio_file.read()
+    
+    upload_dir = "uploads/audio"
+    os.makedirs(upload_dir, exist_ok=True)
+    filename = f"{session_id}_{question_id}_{int(time.time())}.webm"
+    file_path = os.path.join(upload_dir, filename)
+    with open(file_path, "wb") as f:
+        f.write(audio_bytes)
+
+    # Transcribe audio
+    transcript = await stt_service.transcribe_audio(audio_bytes)
+
+    if transcript.startswith("Transcription error"):
+        # Don't fail hard, LLM might be able to handle empty/garbage transcript with conversational fallback
+        transcript = "[Inaudible or transcription failed]"
+
+    # Evaluate Answer with LLM
+    eval_result = await llm_service.evaluate_answer(
+        question=question.content,
+        answer=transcript,
+        context=question.expected_answer
+    )
+    
+    score = eval_result.get("score", 0)
+    feedback = eval_result.get("feedback", "No feedback generated.")
+    is_final = eval_result.get("is_final", True)
+    ai_response = eval_result.get("ai_response", "Thank you.")
+    
+    # Save Answer
+    new_answer = Answer(
+        transcript=transcript,
+        audio_url=file_path, 
+        score=score,
+        feedback=feedback,
+        question_id=question.id
+    )
+    db.add(new_answer)
+    await db.commit()
+    await db.refresh(new_answer)
+    
+    # Return Pydantic schema with dynamically added LLM flags
+    resp = schemas.AnswerResponse.model_validate(new_answer)
+    resp.is_final = is_final
+    resp.ai_response = ai_response
+    
+    return resp

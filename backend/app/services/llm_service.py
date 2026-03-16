@@ -52,16 +52,30 @@ class LLMService:
             return {}
             
         prompt = f"""
-        You are an expert interviewer. Evaluate the candidate's answer to the following question.
+        You are an expert, friendly AI interviewer. The candidate just spoke.
         
         Question: {question}
         Candidate Answer: {answer}
-        Context: {context or "N/A"}
+        Context (expected response): {context or "N/A"}
         
-        Return a JSON object with:
+        Analyze the 'Candidate Answer'. Are they trying to answer the question, or are they asking for help, clarification, or for you to repeat the question?
+
+        Rule 1 - Not an answer (Asking for help/repeat/hint):
+        If they seem stuck, confused, or explicitly ask for help/repeat, do NOT grade them yet. 
+        Set 'is_final' to false. Provide a friendly and helpful 'ai_response' (e.g. repeat the question naturally, or give a small hint). 
+
+        Rule 2 - Attempted an answer:
+        If they attempted to answer the question (even if it's incorrect or incomplete), this is a final attempt for this question.
+        Set 'is_final' to true. Grade their answer (0-100). 
+        Provide a natural, conversational 'ai_response' giving them very brief immediate feedback (e.g. "Great point about X.", or "That's not quite right, but let's move on.").
+        Provide detailed feedback, strengths, and improvements for their final report in the respective fields.
+        
+        Return ONLY a JSON object with this EXACT schema:
         {{
-            "score": 0-100 (integer),
-            "feedback": "Constructive feedback string",
+            "is_final": boolean,
+            "ai_response": "What you say back to the candidate via Text-to-Speech",
+            "score": integer (0 to 100, use 0 if not final),
+            "feedback": "Detailed constructive feedback for the final report (empty if not final)",
             "strengths": ["list", "of", "strengths"],
             "improvements": ["list", "of", "improvements"]
         }}
@@ -73,6 +87,6 @@ class LLMService:
             return json.loads(text)
         except Exception as e:
             print(f"Error evaluating answer: {e}")
-            return {"score": 0, "feedback": "Error evaluating answer."}
+            return {"score": 0, "feedback": "Error evaluating answer.", "is_final": True, "ai_response": "I encountered an error understanding that."}
 
 llm_service = LLMService()

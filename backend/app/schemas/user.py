@@ -10,6 +10,7 @@ class UserResponse(BaseModel):
     id: int
     email: EmailStr
     role: UserRole
+    has_resume: bool = False
     
     class Config:
         from_attributes = True

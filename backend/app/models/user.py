@@ -16,6 +16,8 @@ class User(Base):
     email: Mapped[str] = mapped_column(String, unique=True, index=True)
     password_hash: Mapped[str] = mapped_column(String)
     role: Mapped[UserRole] = mapped_column(Enum(UserRole), default=UserRole.CANDIDATE)
+    resume_text: Mapped[str] = mapped_column(String, nullable=True)
+    parsed_resume_data: Mapped[str] = mapped_column(String, nullable=True) # JSON stored as string
     created_at: Mapped[DateTime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     # Relationships

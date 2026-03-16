@@ -6,7 +6,7 @@ from app.models.interview import InterviewStatus
 class QuestionBase(BaseModel):
     id: int
     content: str
-    type: str # technical, behavioral, etc.
+    question_type: str # renamed from 'type' to match SQLAlchemy model
     difficulty: Optional[str] = None
     order_index: int
     audio_url: Optional[str] = None
@@ -32,6 +32,8 @@ class AnswerResponse(BaseModel):
     score: Optional[float]
     feedback: Optional[str]
     submitted_at: datetime
+    is_final: bool = True
+    ai_response: str = ""
     
     class Config:
         from_attributes = True
@@ -39,7 +41,6 @@ class AnswerResponse(BaseModel):
 class SessionCreate(BaseModel):
     job_role: str
     jd_text: str
-    candidate_id: int # For simplicity, passing ID directly. In real app, get from auth context.
 
 class SessionResponse(BaseModel):
     id: int

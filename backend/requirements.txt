@@ -14,7 +14,7 @@ google-generativeai
 groq
 # spacy # Uncomment if needed later, usually needs separate model download
 # sentence-transformers # Heavy dependency, maybe later
-# openai-whisper # Heavy dependency, maybe later
+faster-whisper
 requests
 python-dotenv
 asyncpg

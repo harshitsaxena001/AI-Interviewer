@@ -5,7 +5,7 @@ from app.services.piper_service import piper_service
 
 router = APIRouter()
 
-@router.get("/")
+@router.get("/generate")
 async def generate_speech(text: str = Query(..., description="Text to synthesize to speech")):
     try:
         audio_bytes = await piper_service.text_to_speech(text)
