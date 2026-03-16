@@ -71,12 +71,17 @@ async def start_practice_session(
         except ValueError:
              q_type = QuestionType.TECHNICAL
              
+        import urllib.parse
+        content_text = q_data.get("content", "Error generating content")
+        audio_url = f"/api/v1/tts/?text={urllib.parse.quote(content_text)}"
+        
         new_question = Question(
-            content=q_data.get("content", "Error generating content"),
+            content=content_text,
             question_type=q_type,
             order_index=idx,
             difficulty=q_data.get("difficulty", "Medium"),
             expected_answer=q_data.get("expected_answer", ""),
+            audio_url=audio_url,
             practice_session_id=new_session.id
         )
         db.add(new_question)

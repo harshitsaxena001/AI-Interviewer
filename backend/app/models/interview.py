@@ -46,6 +46,7 @@ class Question(Base):
     order_index: Mapped[int] = mapped_column(Integer)
     difficulty: Mapped[str] = mapped_column(String, nullable=True) # Easy, Medium, Hard
     expected_answer: Mapped[str] = mapped_column(Text, nullable=True)
+    audio_url: Mapped[str] = mapped_column(String, nullable=True)
     
     interview_session_id: Mapped[Optional[int]] = mapped_column(ForeignKey("interview_sessions.id"), nullable=True)
     practice_session_id: Mapped[Optional[int]] = mapped_column(ForeignKey("practice_sessions.id"), nullable=True)

@@ -9,6 +9,7 @@ class QuestionBase(BaseModel):
     type: str # technical, behavioral, etc.
     difficulty: Optional[str] = None
     order_index: int
+    audio_url: Optional[str] = None
     
     class Config:
         from_attributes = True
