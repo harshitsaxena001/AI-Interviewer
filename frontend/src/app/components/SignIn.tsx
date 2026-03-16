@@ -54,9 +54,11 @@ export function SignIn() {
 
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div className="space-y-1.5">
-              <Label htmlFor="email">Email Address</Label>
+              <Label htmlFor="email" className="text-gray-700">
+                Email Address
+              </Label>
               <div className="relative">
-                <Mail className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
+                <Mail className="absolute left-4 top-3.5 h-4 w-4 text-gray-400 z-10" />
                 <Input
                   id="email"
                   type="email"
@@ -64,15 +66,17 @@ export function SignIn() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="name@example.com"
-                  className="pl-12 h-11 bg-gray-50 border-none rounded-xl focus-visible:ring-black"
+                  className="pl-12 h-11 bg-gray-50 border-gray-200 rounded-xl focus-visible:ring-black text-black placeholder:text-gray-400"
                 />
               </div>
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-gray-700">
+                Password
+              </Label>
               <div className="relative">
-                <Lock className="absolute left-4 top-3 h-5 w-5 text-gray-400" />
+                <Lock className="absolute left-4 top-3.5 h-4 w-4 text-gray-400 z-10" />
                 <Input
                   id="password"
                   type="password"
@@ -80,7 +84,7 @@ export function SignIn() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="pl-12 h-11 bg-gray-50 border-none rounded-xl focus-visible:ring-black"
+                  className="pl-12 h-11 bg-gray-50 border-gray-200 rounded-xl focus-visible:ring-black text-black placeholder:text-gray-400"
                 />
               </div>
             </div>

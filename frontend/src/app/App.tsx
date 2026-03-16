@@ -26,11 +26,11 @@ export default function App() {
   }
 
   if (isDashboardPage) {
-    return <Dashboard role="candidate" userName="Adrian" />;
+    return <Dashboard role="candidate" userName="Candidate" />;
   }
 
   if (isHRDashboardPage) {
-    return <Dashboard role="hr" userName="Sarah HR" />;
+    return <Dashboard role="hr" userName="HR" />;
   }
 
   return (

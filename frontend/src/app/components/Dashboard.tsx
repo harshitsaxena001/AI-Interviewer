@@ -45,6 +45,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Textarea } from "./ui/textarea";
+import { InterviewSession } from "./InterviewSession";
 
 type UserRole = "hr" | "candidate";
 
@@ -64,38 +65,23 @@ interface HistoryItem {
 
 // Mock Data for Charts
 const SKILL_DATA = [
-  { subject: "Communication", A: 85, fullMark: 100 },
-  { subject: "Confidence", A: 78, fullMark: 100 },
-  { subject: "Technical", A: 92, fullMark: 100 },
-  { subject: "Response Time", A: 70, fullMark: 100 },
+  { subject: "Communication", A: 0, fullMark: 100 },
+  { subject: "Confidence", A: 0, fullMark: 100 },
+  { subject: "Technical", A: 0, fullMark: 100 },
+  { subject: "Response Time", A: 0, fullMark: 100 },
 ];
 
 const TREND_DATA = [
-  { name: "Mon", score: 65 },
-  { name: "Tue", score: 72 },
-  { name: "Wed", score: 68 },
-  { name: "Thu", score: 85 },
-  { name: "Fri", score: 82 },
-  { name: "Sat", score: 91 },
-  { name: "Sun", score: 88 },
+  { name: "Mon", score: 0 },
+  { name: "Tue", score: 0 },
+  { name: "Wed", score: 0 },
+  { name: "Thu", score: 0 },
+  { name: "Fri", score: 0 },
+  { name: "Sat", score: 0 },
+  { name: "Sun", score: 0 },
 ];
 
-const CANDIDATE_HISTORY: HistoryItem[] = [
-  {
-    id: "1",
-    title: "Google Mock Session",
-    role: "Senior Frontend Engineer",
-    date: "12 Mar 2026",
-    score: 88,
-    status: "completed",
-    duration: "45 mins",
-    aiInsight: "Excellent grasp of system design principles.",
-    overallPerformance:
-      "The candidate demonstrated high proficiency in React and architectural patterns.",
-    strengths: ["React Hooks", "System Design", "Problem Solving"],
-    weaknesses: ["Unit Testing", "Performance Optimization"],
-  },
-];
+const CANDIDATE_HISTORY: HistoryItem[] = [];
 
 export function Dashboard({
   role: initialRole,
@@ -107,6 +93,7 @@ export function Dashboard({
   const [role, setRole] = useState<UserRole>(initialRole || "candidate");
   const [activeTab, setActiveTab] = useState("overview");
   const [showUploadModal, setShowUploadModal] = useState(false);
+  const [isInterviewActive, setIsInterviewActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [jobDescription, setJobDescription] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,17 +106,28 @@ export function Dashboard({
 
   const startInterview = () => {
     setShowUploadModal(false);
+    setIsInterviewActive(true);
   };
 
+  if (isInterviewActive) {
+    return <InterviewSession onExit={() => setIsInterviewActive(false)} />;
+  }
+
   return (
-    <div className="flex min-h-screen bg-[#F8F9FB] font-sans selection:bg-black/5">
+    <div className="flex min-h-screen bg-black text-white font-sans selection:bg-white/20">
+      {/* Background Effects */}
+      <div className="fixed inset-0 z-0 pointer-events-none">
+        <div className="absolute top-20 left-20 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-white/5 rounded-full blur-3xl" />
+      </div>
+
       {/* Sidebar */}
-      <aside className="w-20 lg:w-72 border-r border-border/50 bg-white flex flex-col sticky top-0 h-screen z-40">
+      <aside className="w-20 lg:w-72 border-r border-white/10 bg-black/50 backdrop-blur-xl flex flex-col sticky top-0 h-screen z-40">
         <div className="p-8 flex items-center gap-3">
-          <div className="w-9 h-9 bg-black rounded-xl flex items-center justify-center shadow-lg shadow-black/10 shrink-0">
-            <Zap className="text-white fill-white" size={18} />
+          <div className="w-9 h-9 bg-white rounded-xl flex items-center justify-center shadow-lg shadow-white/5 shrink-0">
+            <Zap className="text-black fill-black" size={18} />
           </div>
-          <span className="font-black text-lg tracking-tight text-foreground hidden lg:block uppercase">
+          <span className="font-black text-lg tracking-tight text-white hidden lg:block uppercase">
             Interview AI
           </span>
         </div>
@@ -149,7 +147,7 @@ export function Dashboard({
           />
         </nav>
 
-        <div className="p-6 border-t border-border/50 space-y-1">
+        <div className="p-6 border-t border-white/10 space-y-1">
           <SidebarLink icon={<Settings size={20} />} label="Settings" />
           <SidebarLink
             icon={<LogOut size={20} />}
@@ -160,35 +158,28 @@ export function Dashboard({
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 px-8 lg:px-12 py-10 overflow-y-auto">
+      <main className="flex-1 px-8 lg:px-12 py-10 overflow-y-auto relative z-10">
         {/* Header */}
         <header className="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-6">
           <div className="space-y-1">
-            <h1 className="text-2xl font-bold text-foreground tracking-tight">
-              Welcome back, {userName || "Adrian"}
+            <h1 className="text-2xl font-bold text-white tracking-tight">
+              Welcome back, {userName || "Candidate"}
             </h1>
-            <p className="text-muted-foreground text-sm font-medium">
+            <p className="text-gray-400 text-sm font-medium">
               Monitor your progress and refine your skills.
             </p>
           </div>
           <div className="flex items-center gap-4">
-            <div className="relative group">
-              <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/40 group-focus-within:text-black transition-colors"
-                size={16}
-              />
-              <input
-                type="text"
-                placeholder="Search resources..."
-                className="pl-9 pr-4 py-2 bg-white border border-border/60 rounded-xl text-sm w-64 focus:outline-none focus:ring-2 focus:ring-black/5 focus:border-black/20 transition-all font-medium"
-              />
+            <Button
+              onClick={() => setShowUploadModal(true)}
+              className="bg-white text-black hover:bg-gray-200 rounded-xl font-bold px-6 h-12 flex items-center gap-2 transition-transform active:scale-95 shadow-lg shadow-white/5"
+            >
+              <Plus size={18} />
+              New Interview
+            </Button>
+            <div className="h-12 w-12 rounded-full border border-white/20 shadow-sm bg-white/10 hidden sm:flex items-center justify-center text-white font-bold text-lg">
+              {userName ? userName.charAt(0).toUpperCase() : "C"}
             </div>
-            <Avatar className="h-10 w-10 border border-border/50 shadow-sm">
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>
-                {(userName || "Adrian").substring(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
           </div>
         </header>
 
@@ -198,41 +189,26 @@ export function Dashboard({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 font-sans">
               <QuickStat
                 label="Interviews"
-                value="12"
-                icon={<MessageSquare className="text-blue-600" size={18} />}
+                value="0"
+                icon={<MessageSquare className="text-blue-400" size={18} />}
                 trend="Total sessions"
-                bgColor="bg-blue-50"
+                bgColor="bg-blue-500/10"
               />
-              <CircularStat
-                label="Avg Score"
-                value={84}
-                subtext="Top 10% percentile"
-                category="PERCENTILE"
-              />
-              <CircularStat
-                label="Accuracy"
-                value={91}
-                subtext="Improving steadily"
-                category="SUCCESS"
-              />
-              <CircularStat
-                label="Readiness"
-                value={88}
-                subtext="Role: Sr. Frontend"
-                category="READINESS"
-              />
+              <CircularStat label="Avg Score" value={0} />
+              <CircularStat label="Accuracy" value={0} />
+              <CircularStat label="Readiness" value={0} />
             </div>
 
             {/* Skill Radar + Performance Line Chart */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              <Card className="border-none shadow-sm rounded-3xl bg-white p-8">
+              <Card className="border border-white/10 shadow-sm rounded-3xl bg-white/5 backdrop-blur-md p-8">
                 <CardHeader className="px-0 pt-0 border-none">
-                  <CardTitle className="text-lg font-bold flex items-center gap-2">
-                    <Activity size={20} className="text-black" />
+                  <CardTitle className="text-lg font-bold flex items-center gap-2 text-white">
+                    <Activity size={20} className="text-gray-400" />
                     Skill Multi-Dimension
                   </CardTitle>
                 </CardHeader>
-                <div className="h-[300px] w-full mt-4">
+                <div className="h-[300px] w-full mt-4 text-white">
                   <ResponsiveContainer width="100%" height="100%">
                     <RadarChart
                       cx="50%"
@@ -240,11 +216,11 @@ export function Dashboard({
                       outerRadius="80%"
                       data={SKILL_DATA}
                     >
-                      <PolarGrid stroke="#f1f1f1" />
+                      <PolarGrid stroke="rgba(255,255,255,0.1)" />
                       <PolarAngleAxis
                         dataKey="subject"
                         tick={{
-                          fill: "#94a3b8",
+                          fill: "#9ca3af",
                           fontSize: 12,
                           fontWeight: 600,
                         }}
@@ -258,36 +234,40 @@ export function Dashboard({
                       <Radar
                         name="Skills"
                         dataKey="A"
-                        stroke="#000"
-                        fill="#000"
-                        fillOpacity={0.05}
+                        stroke="#fff"
+                        fill="#fff"
+                        fillOpacity={0.1}
                       />
                     </RadarChart>
                   </ResponsiveContainer>
                 </div>
               </Card>
 
-              <Card className="border-none shadow-sm rounded-3xl bg-white p-8">
+              <Card className="border border-white/10 shadow-sm rounded-3xl bg-white/5 backdrop-blur-md p-8">
                 <CardHeader className="px-0 pt-0 border-none">
-                  <CardTitle className="text-lg font-bold flex items-center gap-2">
-                    <TrendingUp size={20} className="text-black" />
+                  <CardTitle className="text-lg font-bold flex items-center gap-2 text-white">
+                    <TrendingUp size={20} className="text-gray-400" />
                     Performance Trend
                   </CardTitle>
                 </CardHeader>
                 <div className="h-[300px] w-full mt-4">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={TREND_DATA}>
+                    <LineChart
+                      data={TREND_DATA}
+                      margin={{ top: 10, right: 10, left: 10, bottom: 5 }}
+                    >
                       <CartesianGrid
                         strokeDasharray="3 3"
                         vertical={false}
-                        stroke="#f1f1f1"
+                        stroke="rgba(255,255,255,0.1)"
                       />
                       <XAxis
                         dataKey="name"
                         axisLine={false}
                         tickLine={false}
+                        padding={{ left: 20, right: 20 }}
                         tick={{
-                          fill: "#94a3b8",
+                          fill: "#9ca3af",
                           fontSize: 12,
                           fontWeight: 600,
                         }}
@@ -297,22 +277,24 @@ export function Dashboard({
                       <Tooltip
                         contentStyle={{
                           borderRadius: "16px",
-                          border: "none",
-                          boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+                          border: "1px solid rgba(255,255,255,0.1)",
+                          background: "rgba(0,0,0,0.8)",
+                          color: "#fff",
+                          boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.5)",
                         }}
                       />
                       <Line
                         type="monotone"
                         dataKey="score"
-                        stroke="#000"
+                        stroke="#fff"
                         strokeWidth={4}
                         dot={{
                           r: 4,
-                          fill: "#000",
+                          fill: "#fff",
                           strokeWidth: 2,
-                          stroke: "#fff",
+                          stroke: "#000",
                         }}
-                        activeDot={{ r: 6, strokeWidth: 0 }}
+                        activeDot={{ r: 6, strokeWidth: 0, fill: "#fff" }}
                       />
                     </LineChart>
                   </ResponsiveContainer>
@@ -321,13 +303,13 @@ export function Dashboard({
             </div>
 
             {/* Strengths/Weaknesses + Recent Activity */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 text-white">
               <div className="lg:col-span-2 space-y-6">
                 <div className="flex items-center justify-between">
                   <h2 className="text-lg font-bold">Recent Interviews</h2>
                   <Button
                     variant="outline"
-                    className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest hover:text-black rounded-xl h-8 px-3"
+                    className="text-[10px] font-bold text-gray-400 border-white/10 uppercase tracking-widest hover:text-white hover:bg-white/10 rounded-xl h-8 px-3"
                     onClick={() => setActiveTab("history")}
                   >
                     View All <ChevronRight size={14} className="ml-1" />
@@ -340,8 +322,8 @@ export function Dashboard({
                       <HistoryCard key={item.id} item={item} />
                     ))
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-20 bg-white rounded-3xl border border-dashed border-border/60">
-                      <p className="font-bold text-foreground">
+                    <div className="flex flex-col items-center justify-center py-20 bg-white/5 backdrop-blur-md rounded-3xl border border-dashed border-white/20">
+                      <p className="font-bold text-gray-400">
                         No recent activity
                       </p>
                     </div>
@@ -350,78 +332,43 @@ export function Dashboard({
               </div>
 
               <div className="space-y-6">
-                <Card className="border-none bg-black text-white p-8 rounded-[2rem] relative overflow-hidden group shadow-2xl shadow-black/10">
+                <Card className="border border-white/10 bg-white/5 backdrop-blur-md text-white p-8 rounded-[2rem] relative overflow-hidden group shadow-2xl shadow-black/10">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl group-hover:bg-white/20 transition-all duration-700" />
                   <div className="relative z-10 space-y-4 text-center py-4">
-                    <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+                    <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-6 backdrop-blur-sm border border-white/10">
                       <Sparkles className="text-white" size={28} />
                     </div>
                     <h3 className="text-2xl font-bold leading-tight">
                       Ready to excel?
                     </h3>
-                    <p className="text-white/60 text-xs leading-relaxed font-medium px-4">
+                    <p className="text-gray-400 text-xs leading-relaxed font-medium px-4">
                       Start a mock session now to see your latest performance
                       analysis.
                     </p>
                     <Button
                       onClick={() => setShowUploadModal(true)}
-                      className="w-full bg-white text-black hover:bg-white/90 rounded-2xl h-14 font-bold text-sm transition-transform active:scale-95 mt-4"
+                      className="w-full bg-white text-black hover:bg-gray-200 rounded-2xl h-14 font-bold text-sm transition-transform active:scale-95 mt-4"
                     >
                       Start Mock Interview
                     </Button>
-                  </div>
-                </Card>
-
-                {/* Growth Summary View */}
-                <Card className="border-none shadow-sm rounded-3xl bg-white p-6 space-y-4">
-                  <h3 className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
-                    Quick Insights
-                  </h3>
-                  <div className="space-y-4 pt-2">
-                    <div className="flex gap-3">
-                      <div className="shrink-0 w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
-                        <ShieldCheck size={16} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-foreground">
-                          Strong: Logical Reasoning
-                        </p>
-                        <p className="text-[10px] text-muted-foreground font-medium">
-                          Consistent 90%+ in high-pressure scenarios.
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex gap-3">
-                      <div className="shrink-0 w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center text-amber-600">
-                        <AlertTriangle size={16} />
-                      </div>
-                      <div>
-                        <p className="text-xs font-bold text-foreground">
-                          Weak: System Design Depth
-                        </p>
-                        <p className="text-[10px] text-muted-foreground font-medium">
-                          Needs focus on scalability edge cases.
-                        </p>
-                      </div>
-                    </div>
                   </div>
                 </Card>
               </div>
             </div>
           </div>
         ) : (
-          <div className="space-y-6">
+          <div className="space-y-6 text-white">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-xl font-bold">Interview Library</h2>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-sm text-gray-400 mt-1">
                   Deep dive into your past performances.
                 </p>
               </div>
               {CANDIDATE_HISTORY.length > 0 && (
                 <Button
                   variant="outline"
-                  className="rounded-xl font-bold text-xs h-10 px-4"
+                  className="rounded-xl font-bold text-xs h-10 px-4 border-white/10 hover:bg-white/10 hover:text-white text-gray-400"
                 >
                   Export Reports
                 </Button>
@@ -434,15 +381,13 @@ export function Dashboard({
                   <HistoryCard key={item.id} item={item} />
                 ))
               ) : (
-                <div className="flex flex-col items-center justify-center py-32 bg-white rounded-3xl border border-dashed border-border/60 space-y-4">
-                  <div className="w-16 h-16 rounded-3xl bg-muted/30 flex items-center justify-center text-muted-foreground/30">
+                <div className="flex flex-col items-center justify-center py-32 bg-white/5 backdrop-blur-md rounded-3xl border border-dashed border-white/20 space-y-4 text-white">
+                  <div className="w-16 h-16 rounded-3xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400">
                     <Search size={32} />
                   </div>
                   <div className="text-center">
-                    <p className="text-xl font-bold text-foreground">
-                      Your library is empty
-                    </p>
-                    <p className="text-sm text-muted-foreground font-medium mt-1">
+                    <p className="text-xl font-bold">Your library is empty</p>
+                    <p className="text-sm text-gray-400 font-medium mt-1">
                       Upload a resume and start practicing to build your
                       library.
                     </p>
@@ -451,7 +396,7 @@ export function Dashboard({
                         setActiveTab("overview");
                         setShowUploadModal(true);
                       }}
-                      className="mt-6 bg-black text-white hover:bg-black/90 rounded-xl px-6"
+                      className="mt-6 bg-white text-black hover:bg-gray-200 rounded-xl px-6 font-bold"
                     >
                       Start First Interview
                     </Button>
@@ -472,55 +417,55 @@ export function Dashboard({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setShowUploadModal(false)}
-              className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
             <motion.div
               initial={{ opacity: 0, scale: 0.98, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.98, y: 10 }}
-              className="relative w-full max-w-xl bg-white rounded-[2.5rem] shadow-2xl overflow-hidden border border-border/40"
+              className="relative w-full max-w-xl bg-black/90 rounded-[2.5rem] shadow-2xl overflow-hidden border border-white/10 backdrop-blur-xl"
             >
-              <div className="p-10 md:p-12">
+              <div className="p-10 md:p-12 text-white">
                 <div className="flex items-center justify-between mb-8">
                   <div className="space-y-1">
-                    <h2 className="text-2xl font-black text-foreground tracking-tight">
+                    <h2 className="text-2xl font-black tracking-tight">
                       Setup Session
                     </h2>
-                    <p className="text-muted-foreground text-sm font-medium">
+                    <p className="text-gray-400 text-sm font-medium">
                       Let's prepare your interview environment
                     </p>
                   </div>
                   <button
                     onClick={() => setShowUploadModal(false)}
-                    className="w-10 h-10 rounded-full bg-muted/40 flex items-center justify-center hover:bg-muted transition-colors"
+                    className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white/10 transition-colors"
                   >
-                    <X size={20} className="text-muted-foreground" />
+                    <X size={20} className="text-gray-400" />
                   </button>
                 </div>
 
                 <div className="space-y-8">
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">
                       1. Job Role or Description
                     </label>
                     <Textarea
                       placeholder="e.g. Senior Backend Architect at Netflix"
-                      className="min-h-[140px] bg-secondary/30 border-none rounded-2xl p-5 focus-visible:ring-black/10 focus-visible:ring-1 resize-none text-sm placeholder:text-muted-foreground/50 transition-all font-medium"
+                      className="min-h-[140px] bg-white/5 border border-white/10 rounded-2xl p-5 focus-visible:ring-white/20 focus-visible:ring-1 resize-none text-sm placeholder:text-gray-600 transition-all font-medium text-white"
                       value={jobDescription}
                       onChange={(e) => setJobDescription(e.target.value)}
                     />
                   </div>
 
                   <div className="space-y-3">
-                    <label className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest pl-1">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">
                       2. Resume (.pdf)
                     </label>
                     <div
                       onClick={() => fileInputRef.current?.click()}
                       className={`border border-dashed rounded-2xl p-8 flex flex-col items-center justify-center transition-all cursor-pointer ${
                         selectedFile
-                          ? "border-black bg-black/5"
-                          : "border-border/60 hover:border-black/20 hover:bg-muted/30"
+                          ? "border-green-500/50 bg-green-500/5"
+                          : "border-white/20 hover:border-white/40 hover:bg-white/5"
                       }`}
                     >
                       <input
@@ -532,20 +477,20 @@ export function Dashboard({
                       />
                       {selectedFile ? (
                         <div className="flex items-center gap-4">
-                          <FileText className="text-black" size={24} />
+                          <FileText className="text-green-400" size={24} />
                           <div className="text-left">
-                            <p className="font-bold text-foreground text-sm truncate max-w-[200px]">
+                            <p className="font-bold text-white text-sm truncate max-w-[200px]">
                               {selectedFile.name}
                             </p>
-                            <p className="text-[10px] text-muted-foreground font-bold">
+                            <p className="text-[10px] text-green-400/80 font-bold">
                               READY
                             </p>
                           </div>
                         </div>
                       ) : (
                         <div className="flex items-center gap-4">
-                          <Upload className="text-muted-foreground" size={20} />
-                          <span className="text-sm font-bold text-muted-foreground">
+                          <Upload className="text-gray-400" size={20} />
+                          <span className="text-sm font-bold text-gray-400">
                             Select File
                           </span>
                         </div>
@@ -557,7 +502,7 @@ export function Dashboard({
                     <Button
                       disabled={!selectedFile || !jobDescription}
                       onClick={startInterview}
-                      className="flex-1 h-14 bg-black hover:bg-black/90 text-white rounded-2xl font-bold shadow-xl shadow-black/10 flex items-center justify-center gap-2 group transition-all"
+                      className="flex-1 h-14 bg-white hover:bg-gray-200 text-black rounded-2xl font-bold shadow-xl flex items-center justify-center gap-2 group transition-all"
                     >
                       Launch Simulation
                       <ArrowRight
@@ -586,15 +531,15 @@ function CircularStat({
 }: {
   label: string;
   value: number;
-  subtext: string;
-  category: string;
+  subtext?: string;
+  category?: string;
 }) {
   const radius = 35;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (value / 100) * circumference;
 
   return (
-    <Card className="border-none shadow-sm rounded-3xl bg-white p-6 transition-transform hover:-translate-y-1 duration-300 flex flex-col items-center justify-center overflow-hidden relative">
+    <Card className="border border-white/10 shadow-sm rounded-3xl bg-white/5 backdrop-blur-md p-6 transition-transform hover:-translate-y-1 duration-300 flex flex-col items-center justify-center overflow-hidden relative">
       <div className="relative w-24 h-24 flex items-center justify-center mb-2">
         <svg className="w-full h-full -rotate-90" viewBox="0 0 100 100">
           <circle
@@ -605,13 +550,13 @@ function CircularStat({
             strokeWidth="8"
             strokeDasharray={`${circumference} ${circumference}`}
             fill="transparent"
-            className="text-muted/10"
+            className="text-white/10"
           />
           <motion.circle
             cx="50"
             cy="50"
             r={radius}
-            stroke="black"
+            stroke="white"
             strokeWidth="8"
             fill="transparent"
             strokeDasharray={circumference}
@@ -621,20 +566,20 @@ function CircularStat({
             strokeLinecap="round"
           />
         </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center pt-1">
-          <span className="text-2xl font-black tracking-tighter leading-none text-foreground">
+        <div className="absolute inset-0 flex flex-col items-center justify-center pt-1 text-white">
+          <span className="text-2xl font-black tracking-tighter leading-none">
             {value}%
           </span>
-          <span className="text-[7px] font-black text-muted-foreground tracking-[0.2em] uppercase mt-1 leading-none">
+          <span className="text-[7px] font-black text-gray-400 tracking-[0.2em] uppercase mt-1 leading-none">
             {category}
           </span>
         </div>
       </div>
       <div className="text-center mt-2 flex flex-col items-center">
-        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-2">
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-2">
           {label}
         </p>
-        <p className="text-[9px] font-bold text-black/40 uppercase tracking-tighter leading-none">
+        <p className="text-[9px] font-bold text-white/40 uppercase tracking-tighter leading-none">
           {subtext}
         </p>
       </div>
@@ -658,12 +603,12 @@ function SidebarLink({
       onClick={onClick}
       className={`w-full flex items-center gap-3 px-4 py-3.5 rounded-xl transition-all duration-200 group ${
         active
-          ? "bg-black text-white shadow-lg shadow-black/5"
-          : "text-muted-foreground hover:bg-muted/50 hover:text-foreground"
+          ? "bg-white/10 text-white shadow-lg shadow-black/5"
+          : "text-gray-400 hover:bg-white/5 hover:text-white"
       }`}
     >
       <div
-        className={`${active ? "text-white" : "group-hover:text-foreground opacity-70 group-hover:opacity-100"}`}
+        className={`${active ? "text-white" : "group-hover:text-white opacity-70 group-hover:opacity-100"}`}
       >
         {icon}
       </div>
@@ -690,23 +635,21 @@ function QuickStat({
   bgColor: string;
 }) {
   return (
-    <Card className="border-none shadow-sm rounded-3xl bg-white p-6 transition-transform hover:-translate-y-1 duration-300">
-      <div className="flex items-start justify-between">
+    <Card className="border border-white/10 shadow-sm rounded-3xl bg-white/5 backdrop-blur-md p-6 transition-transform hover:-translate-y-1 duration-300">
+      <div className="flex items-start justify-between text-white">
         <div className="space-y-3">
           <div
-            className={`${bgColor} w-9 h-9 rounded-xl flex items-center justify-center`}
+            className={`${bgColor} w-9 h-9 rounded-xl flex items-center justify-center bg-opacity-20 backdrop-blur-sm`}
           >
             {icon}
           </div>
           <div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-none mb-2">
+            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-2">
               {label}
             </p>
-            <h3 className="text-2xl font-bold text-foreground tracking-tighter">
-              {value}
-            </h3>
+            <h3 className="text-2xl font-bold tracking-tighter">{value}</h3>
           </div>
-          <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
+          <p className="text-[9px] font-bold text-gray-500 uppercase tracking-tighter">
             {trend}
           </p>
         </div>
@@ -719,20 +662,20 @@ function HistoryCard({ item }: { item: HistoryItem }) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Card className="border-none shadow-sm rounded-2xl bg-white overflow-hidden transition-all hover:shadow-md">
+    <Card className="border border-white/10 shadow-sm rounded-2xl bg-white/5 backdrop-blur-md overflow-hidden transition-all hover:bg-white/10">
       <div
-        className="p-5 flex items-center justify-between cursor-pointer group"
+        className="p-5 flex items-center justify-between cursor-pointer group text-white"
         onClick={() => setIsOpen(!isOpen)}
       >
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-xl bg-muted/30 flex items-center justify-center text-foreground group-hover:bg-black group-hover:text-white transition-all">
+          <div className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-300 group-hover:text-white transition-all">
             <FileText size={20} />
           </div>
           <div>
-            <h4 className="font-bold text-foreground group-hover:text-black transition-colors">
+            <h4 className="font-bold group-hover:text-gray-200 transition-colors">
               {item.title}
             </h4>
-            <p className="text-xs text-muted-foreground font-medium">
+            <p className="text-xs text-gray-400 font-medium">
               {item.role} • {item.date}
             </p>
           </div>
@@ -742,14 +685,14 @@ function HistoryCard({ item }: { item: HistoryItem }) {
           <div className="text-right hidden sm:block">
             <Badge
               variant="outline"
-              className="rounded-lg px-2.5 py-1 font-black text-xs border-primary/10 bg-primary/5"
+              className="rounded-lg px-2.5 py-1 font-black text-xs border-green-500/20 bg-green-500/10 text-green-400"
             >
               SCORE: {item.score}%
             </Badge>
           </div>
           <ChevronRight
             size={18}
-            className={`text-muted-foreground transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
+            className={`text-gray-400 transition-transform duration-300 ${isOpen ? "rotate-90" : ""}`}
           />
         </div>
       </div>
@@ -760,31 +703,31 @@ function HistoryCard({ item }: { item: HistoryItem }) {
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="border-t border-border/50 bg-muted/5 overflow-hidden"
+            className="border-t border-white/10 bg-black/20 overflow-hidden"
           >
-            <div className="p-8 space-y-8">
+            <div className="p-8 space-y-8 text-white">
               {/* Performance Summary */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-black">
-                    <History size={16} />
-                    <span className="text-xs font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-2">
+                    <History size={16} className="text-gray-400" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
                       Overall Performance
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-medium bg-white p-5 rounded-2xl border border-border/40">
+                  <p className="text-sm text-gray-300 leading-relaxed font-medium bg-white/5 p-5 rounded-2xl border border-white/10">
                     {item.overallPerformance}
                   </p>
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-black">
-                    <Sparkles size={16} />
-                    <span className="text-xs font-bold uppercase tracking-widest">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={16} className="text-yellow-400" />
+                    <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
                       AI Summary
                     </span>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed font-medium bg-white p-5 rounded-2xl border border-border/40 italic">
+                  <p className="text-sm text-gray-300 leading-relaxed font-medium bg-white/5 p-5 rounded-2xl border border-white/10 italic">
                     "{item.aiInsight}"
                   </p>
                 </div>
@@ -793,7 +736,7 @@ function HistoryCard({ item }: { item: HistoryItem }) {
               {/* Strengths & Weaknesses */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-emerald-600">
+                  <div className="flex items-center gap-2 text-emerald-400">
                     <ShieldCheck size={16} />
                     <span className="text-xs font-bold uppercase tracking-widest">
                       Key Strengths
@@ -803,7 +746,7 @@ function HistoryCard({ item }: { item: HistoryItem }) {
                     {item.strengths.map((s, i) => (
                       <Badge
                         key={i}
-                        className="bg-emerald-50 text-emerald-700 border-none px-3 py-1.5 rounded-lg text-xs font-bold ring-1 ring-emerald-100"
+                        className="bg-emerald-500/10 text-emerald-400 border-none px-3 py-1.5 rounded-lg text-xs font-bold ring-1 ring-emerald-500/20"
                       >
                         {s}
                       </Badge>
@@ -812,7 +755,7 @@ function HistoryCard({ item }: { item: HistoryItem }) {
                 </div>
 
                 <div className="space-y-4">
-                  <div className="flex items-center gap-2 text-amber-600">
+                  <div className="flex items-center gap-2 text-amber-400">
                     <AlertTriangle size={16} />
                     <span className="text-xs font-bold uppercase tracking-widest">
                       Growth Areas
@@ -822,7 +765,7 @@ function HistoryCard({ item }: { item: HistoryItem }) {
                     {item.weaknesses.map((w, i) => (
                       <Badge
                         key={i}
-                        className="bg-amber-50 text-amber-700 border-none px-3 py-1.5 rounded-lg text-xs font-bold ring-1 ring-amber-100"
+                        className="bg-amber-500/10 text-amber-400 border-none px-3 py-1.5 rounded-lg text-xs font-bold ring-1 ring-amber-500/20"
                       >
                         {w}
                       </Badge>
@@ -831,8 +774,8 @@ function HistoryCard({ item }: { item: HistoryItem }) {
                 </div>
               </div>
 
-              <div className="flex justify-end pt-4">
-                <Button className="rounded-xl h-12 px-8 font-bold text-sm bg-black hover:bg-gray-900">
+              <div className="flex justify-end pt-4 border-t border-white/10">
+                <Button className="rounded-xl h-12 px-8 font-bold text-sm bg-white text-black hover:bg-gray-200">
                   Full Interview Replay
                 </Button>
               </div>
